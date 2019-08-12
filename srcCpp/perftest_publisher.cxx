@@ -1687,9 +1687,10 @@ int perftest_cpp::Publisher()
     TestMessage message;
     message.entity_id = _PM.get<int>("pidMultiPubTest");
 
+    std::vector<char> payloadBuffer;
     if (_PM.is_set("binaryPayload")) {
-        std::vector<char> buf = readAllBytes(_PM.get<std::string>("binaryPayload"));
-        message.data = buf.data();
+        payloadBuffer = readAllBytes(_PM.get<std::string>("binaryPayload"));
+        message.data = payloadBuffer.data();
     } else {
         message.data = new char[(std::max)
                 ((int)_PM.get<unsigned long long>("dataLen"),
