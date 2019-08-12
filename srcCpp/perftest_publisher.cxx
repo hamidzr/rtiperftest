@@ -1493,6 +1493,7 @@ std::vector<char> readAllBytes(std::string const& filename)
 
     ifs.seekg(0, std::ios::beg);
     ifs.read(&result[0], pos);
+    ifs.close();
 
     return result;
 }
