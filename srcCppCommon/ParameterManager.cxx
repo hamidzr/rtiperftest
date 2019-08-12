@@ -8,6 +8,15 @@
 
 #include "ParameterManager.h"
 #include "perftest_cpp.h"
+#include <fstream>
+
+unsigned int getFileSize(std::string const& filename)
+{
+    std::ifstream ifs(filename, std::ios::binary | std::ios::ate);
+    std::ifstream::pos_type pos = ifs.tellg();
+    ifs.close();
+    return (unsigned int) pos;
+}
 
 ParameterManager::ParameterManager() : perftestForMicro(false)
 {
@@ -1345,6 +1354,12 @@ bool ParameterManager::parse(int argc, char *argv[])
             success = false;
         }
     }
+
+    if (is_set("binaryPayload")) {
+        unsigned int fileSize = getFileSize(get<std::string>("binaryPayload"));
+        set<unsigned long long>("dataLen", fileSize);
+    }
+
     return success;
 }
 
