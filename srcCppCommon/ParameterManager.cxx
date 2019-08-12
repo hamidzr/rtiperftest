@@ -48,6 +48,19 @@ void ParameterManager::initialize()
             | Middleware::RTIDDSMICRO);
     create("dataLen", dataLen);
 
+    Parameter<std::string> *binaryPayload =
+            new Parameter<std::string>;
+    binaryPayload->set_command_line_argument("-binaryPayload", "<file path>");
+    binaryPayload->set_description(
+            "Set the file used to populate the payload");
+    binaryPayload->set_type(T_STR);
+    binaryPayload->set_extra_argument(YES);
+    binaryPayload->set_group(GENERAL);
+    binaryPayload->set_supported_middleware(
+            Middleware::RTIDDSPRO
+            | Middleware::RAWTRANSPORT
+            | Middleware::RTIDDSMICRO);
+    create("binaryPayload", binaryPayload);
 
     Parameter<int> *verbosity = new Parameter<int>(1);
     verbosity->set_command_line_argument("-verbosity", "<level>");
