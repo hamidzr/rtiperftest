@@ -13,6 +13,7 @@
 #include "perftest_cpp.h"
 #include "CpuMonitor.h"
 #include "Infrastructure_common.h"
+#include <fstream>
 
 
 #if defined(RTI_ANDROID)
@@ -1483,6 +1484,19 @@ public:
     }
 };
 
+std::vector<char> readAllBytes(std::string const& filename)
+{
+    std::ifstream ifs(filename, std::ios::binary | std::ios::ate);
+    std::ifstream::pos_type pos = ifs.tellg();
+
+    std::vector<char>  result(pos);
+
+    ifs.seekg(0, std::ios::beg);
+    ifs.read(&result[0], pos);
+
+    return result;
+}
+
 /*********************************************************
  * Publisher
  */
@@ -1671,9 +1685,15 @@ int perftest_cpp::Publisher()
     // Allocate data and set size
     TestMessage message;
     message.entity_id = _PM.get<int>("pidMultiPubTest");
-    message.data = new char[(std::max)
-            ((int)_PM.get<unsigned long long>("dataLen"),
-            (int)LENGTH_CHANGED_SIZE)];
+
+    if (_PM.is_set("binaryPayload")) {
+        std::vector<char> buf = readAllBytes(_PM.get<std::string>("binaryPayload"));
+        message.data = buf.data();
+    } else {
+        message.data = new char[(std::max)
+                ((int)_PM.get<unsigned long long>("dataLen"),
+                (int)LENGTH_CHANGED_SIZE)];
+    }
 
     if (showCpu && _PM.get<int>("pidMultiPubTest") == 0) {
         reader_listener->cpu.initialize();
